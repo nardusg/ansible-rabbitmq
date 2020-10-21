@@ -51,9 +51,6 @@
   become: true
   when: inventory_hostname == rabbitmq_master
 
-- name: rabbitmq_clustering | Pause for 1 minute to wait for rabbitmq to start properly
-  pause:
-    minutes: 2
 
 - name: rabbitmq_clustering | sending sigterm to any running rabbitmq processes
   shell: pkill -u rabbitmq || true
@@ -76,6 +73,10 @@
   command: rabbitmqctl reset
   become: true
   when: inventory_hostname != rabbitmq_master
+
+- name: rabbitmq_clustering | Pause for 2 minute to wait for rabbitmq to reset properly
+  pause:
+    minutes: 2
 
 - name: rabbitmq_clustering | joining rabbitmq cluster
   command: rabbitmqctl join_cluster "rabbit@{{ hostvars[rabbitmq_master]['ansible_hostname'] }}"
